@@ -12,8 +12,11 @@ RUN mkdir -p /tmp/libs && \
     curl -L -o /tmp/libs/mysql-connector-j.jar \
     https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar
 
-# Copy PetHub JSP, HTML, CSS, JS, images, WEB-INF, etc.
+# Copy web files
 COPY src/main/webapp/ /usr/local/tomcat/webapps/ROOT/
+
+# Copy Java source files
+COPY src/main/java/ /tmp/src/main/java/
 
 # Create required folders
 RUN mkdir -p /usr/local/tomcat/webapps/ROOT/WEB-INF/classes \
@@ -23,7 +26,7 @@ RUN mkdir -p /usr/local/tomcat/webapps/ROOT/WEB-INF/classes \
 RUN javac \
     -cp "/tmp/libs/jakarta.servlet-api.jar:/tmp/libs/mysql-connector-j.jar" \
     -d /usr/local/tomcat/webapps/ROOT/WEB-INF/classes \
-    $(find src/main/java -name "*.java")
+    $(find /tmp/src/main/java -name "*.java")
 
 # Add MySQL driver to the application
 RUN cp /tmp/libs/mysql-connector-j.jar \
